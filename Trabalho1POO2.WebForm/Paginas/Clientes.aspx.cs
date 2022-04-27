@@ -12,7 +12,7 @@ namespace Trabalho1POO2.WebForm.Paginas
 {
     public partial class Clientes : Page
     {
-        public IClienteRepositorio Cliente = ServiceLocator.Get<IClienteRepositorio>();
+        public IClienteRepositorio ClienteRepositorio = ServiceLocator.Get<IClienteRepositorio>();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -21,7 +21,7 @@ namespace Trabalho1POO2.WebForm.Paginas
 
         private void CarregarListagem()
         {
-            grdDados.DataSource = Cliente.BuscarTudo().ToList();
+            grdDados.DataSource = ClienteRepositorio.BuscarTudo().ToList();
             grdDados.DataBind();
         }
 
@@ -35,7 +35,7 @@ namespace Trabalho1POO2.WebForm.Paginas
                     (Master as SiteMaster).MensagemErro = $"{msg.Aggregate((a,b)=> $"{a}, {b}")}";
                     return;
                 }
-                Cliente.Adicionar(novoCliente);
+                ClienteRepositorio.Adicionar(novoCliente);
                 LimparCampos();
                 CarregarListagem();
                 (Master as SiteMaster).MensagemSucesso = "Cliente Cadastrado Com sucesso";
@@ -61,6 +61,21 @@ namespace Trabalho1POO2.WebForm.Paginas
                 txtEndereco.Text = 
                 txtEstado.Text = 
                 txtNome.Text = string.Empty;
+        }
+
+        protected void grdDados_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        {
+            try
+            {
+                var codigo = Convert.ToInt64(e.Values[0]);
+                ClienteRepositorio.Excluir(codigo);
+                (Master as SiteMaster).MensagemSucesso = "Cliente excluido com sucesso";
+                CarregarListagem();
+            }
+            catch (Exception exc)
+            {
+                (Master as SiteMaster).MensagemErro = $"{exc.Message}";
+            }            
         }
     }
 }

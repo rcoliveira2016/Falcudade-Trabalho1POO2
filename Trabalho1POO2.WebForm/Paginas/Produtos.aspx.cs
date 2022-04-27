@@ -49,5 +49,20 @@ namespace Trabalho1POO2.WebForm.Paginas
             }
 
         }
+
+        protected void grdDados_RowDeleting(object sender, GridViewDeleteEventArgs e)
+        {
+            try
+            {
+                var codigo = Convert.ToInt64(e.Values[0]);
+                ProdutoRepositorio.Excluir(codigo);
+                (Master as SiteMaster).MensagemSucesso = "Produto excluido com sucesso";
+                CarregarListagem();
+            }
+            catch (Exception exc)
+            {
+                (Master as SiteMaster).MensagemErro = $"{exc.Message}";
+            }
+        }
     }
 }
